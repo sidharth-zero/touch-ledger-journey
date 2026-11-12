@@ -15,3 +15,6 @@
 `event_timestamp_raw`: when the touch happened in the source system. `logged_at_utc` is the ingestion date. It differs from the event date by -105 to +105 days for every event type (738 earlier, 701 later, 11 same day), so it cannot be the ingestion lag of a real event date. Ties break by `event_id`.
 
 `source_record_id` is `'SR-' || event_id` on all 1,450 rows: unique, no extra ordering or dedupe signal. `event_id` order does not match either date (event date goes backwards between consecutive ids on 669 of 1,330 merchant pairs).
+
+## Duplicates
+No duplicate touches removed. 13 groups share merchant, type, event date, source and campaign, but they are two real touches, not one touch logged twice: no two rows match on `logged_at_utc` plus every other field, logged dates are weeks apart (11 of 11 non-null-campaign pairs differ except one), and chance alone predicts about 8 same-date collisions among 838 same-key pairs. `journey` keeps all 1,450 rows.
