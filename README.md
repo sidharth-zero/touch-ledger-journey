@@ -12,4 +12,6 @@
 - `opportunity_stage` is a single final value per merchant repeated on every row, not stage at touch time.
 
 ## Chosen timestamp
-`event_timestamp_raw`: when the touch happened in the source system. `logged_at_utc` is load time (meetings log ~10 days before the event on average), so it reflects ingestion, not the journey. Ties break by `event_id`.
+`event_timestamp_raw`: when the touch happened in the source system. `logged_at_utc` is the ingestion date. It differs from the event date by -105 to +105 days for every event type (738 earlier, 701 later, 11 same day), so it cannot be the ingestion lag of a real event date. Ties break by `event_id`.
+
+`source_record_id` is `'SR-' || event_id` on all 1,450 rows: unique, no extra ordering or dedupe signal. `event_id` order does not match either date (event date goes backwards between consecutive ids on 669 of 1,330 merchant pairs).
