@@ -18,3 +18,6 @@
 
 ## Duplicates
 No duplicate touches removed. 13 groups share merchant, type, event date, source and campaign, but they are two real touches, not one touch logged twice: no two rows match on `logged_at_utc` plus every other field, `logged_at_utc` differs in 10 of the 11 pairs with a campaign name, usually by weeks, and chance alone predicts about 8 same-date collisions among 838 same-key pairs. `journey` keeps all 1,450 rows.
+
+## Time zones
+`touch_date` is a date with no time, so it cannot become a UTC instant. `journey` adds `touch_utc_from` / `touch_utc_to`: the UTC span of that local calendar day in `source_timezone`. `order_ambiguous` is true when a touch's span overlaps another touch of the same merchant, so its order against that touch is not provable (same-day ties and cross-zone neighbours). 260 of 1,450 touches (80 merchants) are flagged. `touch_seq` still orders by date, then `event_id`.
