@@ -20,3 +20,10 @@ q("select count(distinct merchant_id) merchants_with_credit,count(*) credited_to
 q("select count(*) meetings_total,count(distinct meeting_id) meetings_with_credit from (select event_id meeting_id from journey where event_type='meeting') left join touch_credit using(meeting_id)") if False else None
 q("select count(*) meetings,(select count(distinct meeting_id) from touch_credit) with_credit,(select count(*) from (select meeting_id from touch_credit group by 1 having abs(sum(credit)-1)>1e-9)) bad_sums from journey where event_type='meeting'")
 q("select event_type,count(*),round(sum(credit),2) credit from touch_credit group by 1")
+c.execute("""create or replace table merchant_close_amount as
+select merchant_id, arg_max(deal_amount, touch_seq) filter (where event_type='close') as close_amount,
+ count(*) filter (where event_type='close') closes from journey group by 1""")
+c.execute("""create or replace table touch_credit_dollars as
+select t.*, j.owning_team, m.close_amount, t.credit*m.close_amount as credit_dollars
+from touch_credit t join journey j on j.event_id=t.touch_event_id join merchant_close_amount m on m.merchant_id=t.merchant_id""")
+q("select owning_team,count(*) touches,round(sum(credit),2) credit,round(sum(credit_dollars),2) dollars from touch_credit_dollars group by 1 order by 3 desc")

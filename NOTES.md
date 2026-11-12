@@ -19,3 +19,7 @@ Run `python build.py` then `python model.py`. Output tables in `touch.duckdb`: `
 - 120 merchants in `merchant_credit`; 67 get credit (462 touches, 85.0 credit).
 - 85 of 98 meetings have credit; 13 have no provably earlier touch. Each credited meeting sums to 1.0.
 - By type: email 40.55, web 24.70, SDR 19.74.
+
+## Dollars
+Amount per merchant = `deal_amount` on the latest `close` row. Blank or no close = unknown, never $0 (credit still counts). Table `touch_credit_dollars`.
+Totals: 462 touches, 85.0 credit, $945,433 credited. Lifecycle Marketing 40.55 / $460,307; Web Analytics 24.70 / $269,660; Sales Development 19.74 / $215,466. 57.0 of 85.0 credit is unpriced (42 credited merchants have no close row, 1 has a blank close amount). Not run in BigQuery: no project configured.
